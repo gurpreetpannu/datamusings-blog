@@ -1,0 +1,21 @@
+runtime: nodejs20
+env: standard
+
+instance_class: F1
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 1
+  max_instances: 10
+
+handlers:
+  - url: /static
+    static_dir: build/static
+
+  - url: /(.*\.(gif|png|jpg|ico|txt|json))$
+    static_files: build/\1
+    upload: build/.*\.(gif|png|jpg|ico|txt|json)$
+
+  - url: .*
+    static_files: build/index.html
+    upload: build/index.html

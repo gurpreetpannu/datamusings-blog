@@ -1,0 +1,15 @@
+{
+  "name": "datamusings-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Data Musings blog",
+  "main": "newsletter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
