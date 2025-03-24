@@ -10,13 +10,20 @@ const Post = ({ post }) => {
           {post.title}
         </Link>
         <p className="post-excerpt">
-          {post.content.substring(0, 150)}...
+          {post.excerpt || post.content.substring(0, 150)}...
         </p>
         <div className="post-meta">
-          <span>By Author</span>
+          <span>{post.author || 'By Author'}</span>
           <span>•</span>
-          <span>5 min read</span>
+          <span>{post.readTime || '5 min read'}</span>
         </div>
+        {post.tags && post.tags.length > 0 && (
+          <div className="post-tags">
+            {post.tags.map(tag => (
+              <span key={tag} className="tag">{tag}</span>
+            ))}
+          </div>
+        )}
       </div>
       {post.image && (
         <img 
