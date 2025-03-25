@@ -24,10 +24,24 @@ async function generateIcons() {
   const sizes = [16, 32, 48, 64, 192, 512];
   
   for (const size of sizes) {
-    await sharp(Buffer.from(svgIcon))
+    const iconBuffer = await sharp(Buffer.from(svgIcon))
       .resize(size, size)
       .png()
+      .toBuffer();
+
+    // Save to images directory
+    await sharp(iconBuffer)
       .toFile(path.join(__dirname, `../public/images/icon-${size}x${size}.png`));
+    
+    // Also save favicon files in root
+    if (size === 16) {
+      await sharp(iconBuffer)
+        .toFile(path.join(__dirname, '../public/favicon-16x16.png'));
+    }
+    if (size === 32) {
+      await sharp(iconBuffer)
+        .toFile(path.join(__dirname, '../public/favicon-32x32.png'));
+    }
     
     console.log(`Generated ${size}x${size} icon`);
   }
@@ -47,6 +61,22 @@ async function generateIcons() {
     .toFile(path.join(__dirname, '../public/favicon.ico'));
   
   console.log('Generated favicon.ico');
+
+  // Generate og-image.png (1200x630 for optimal social media sharing)
+  const ogSvg = `
+  <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="630" fill="#ffffff"/>
+    <circle cx="600" cy="315" r="250" fill="#1a8917"/>
+    <text x="600" y="355" font-family="Arial" font-size="180" font-weight="bold" fill="white" text-anchor="middle">DM</text>
+    <text x="600" y="520" font-family="Arial" font-size="48" font-weight="bold" fill="#333333" text-anchor="middle">Data Musings</text>
+  </svg>
+  `;
+
+  await sharp(Buffer.from(ogSvg))
+    .png()
+    .toFile(path.join(__dirname, '../public/og-image.png'));
+
+  console.log('Generated og-image.png');
 
   // Copy the 192x192 and 512x512 icons to the required locations
   fs.copyFileSync(
