@@ -1,57 +1,81 @@
 const sgMail = require('@sendgrid/mail');
 
-exports.handler = async (event, context) => {
+exports.handler = async function(event, context) {
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ message: 'Method not allowed' }),
-    };
-  }
-
-  const { email } = JSON.parse(event.body);
-
-  if (!email || !email.includes('@')) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Please provide a valid email address.' }),
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const { email } = JSON.parse(event.body);
 
-    // Send notification to admin
-    const adminMsg = {
-      to: process.env.YOUR_EMAIL,
-      from: process.env.SENDGRID_FROM_EMAIL,
-      subject: 'New Newsletter Subscription',
-      text: `New subscriber: ${email}`,
-      html: `<p>New subscriber: ${email}</p>`,
-    };
+    // Validate email
+    if (!email || !email.includes('@')) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid email address' })
+      };
+    }
 
-    // Send confirmation to subscriber
-    const subscriberMsg = {
+    // Set SendGrid API key
+    sgMail.setApiKey(process.env.NETLIFY_EMAILS_PROVIDER_API_KEY);
+
+    // Send welcome email to subscriber
+    const welcomeEmail = {
       to: email,
-      from: process.env.SENDGRID_FROM_EMAIL,
+      from: {
+        email: 'gurpreet.pannu@datamusings.blog',
+        name: 'Data Musings Newsletter'
+      },
       subject: 'Welcome to Data Musings Newsletter!',
-      text: 'Thank you for subscribing to Data Musings! You will receive updates about new posts and content.',
-      html: '<h1>Welcome to Data Musings!</h1><p>Thank you for subscribing! You will receive updates about new posts and content.</p>',
+      text: 'Thank you for subscribing to Data Musings! You will receive weekly updates about new posts and insights.',
+      html: `
+        <h1>Welcome to Data Musings!</h1>
+        <p>Thank you for subscribing to our newsletter!</p>
+        <p>You'll receive weekly updates every Sunday with our latest posts and data science insights.</p>
+        <p>Best regards,<br>Data Musings Team</p>
+      `
     };
 
+    // Send notification to admin with subscriber details
+    const notificationEmail = {
+      to: 'gurpreet.pannu@datamusings.blog',
+      from: {
+        email: 'gurpreet.pannu@datamusings.blog',
+        name: 'Data Musings Newsletter'
+      },
+      subject: 'New Newsletter Subscription - Add to List',
+      text: `
+New subscriber to add to your mailing list:
+Email: ${email}
+Time: ${new Date().toLocaleString()}
+
+Please add this email to your mailing list for weekly digests.
+      `,
+      html: `
+        <h2>New Newsletter Subscription</h2>
+        <p>New subscriber to add to your mailing list:</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+        <p>Please add this email to your mailing list for weekly digests.</p>
+      `
+    };
+
+    // Send both emails
     await Promise.all([
-      sgMail.send(adminMsg),
-      sgMail.send(subscriberMsg)
+      sgMail.send(welcomeEmail),
+      sgMail.send(notificationEmail)
     ]);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Successfully subscribed!' }),
+      body: JSON.stringify({ message: 'Successfully subscribed to newsletter' })
     };
+
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Newsletter subscription error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Failed to subscribe. Please try again.' }),
+      body: JSON.stringify({ error: 'Failed to subscribe to newsletter' })
     };
   }
 }; 

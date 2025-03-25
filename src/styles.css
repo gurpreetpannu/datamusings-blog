@@ -409,66 +409,64 @@ body {
 }
 
 .newsletter-container {
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   border-radius: 8px;
   padding: 2rem;
   margin: 2rem 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.newsletter-content {
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
+.newsletter-container h3 {
+  margin: 0 0 1rem;
+  color: #2c3e50;
 }
 
-.newsletter-content h2 {
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.newsletter-description {
+.newsletter-container p {
   color: #666;
   margin-bottom: 1.5rem;
 }
 
 .newsletter-form {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 
-.newsletter-input {
+.newsletter-form .form-group {
   flex: 1;
+}
+
+.newsletter-form input {
+  width: 100%;
   padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
 }
 
-.newsletter-input:focus {
+.newsletter-form input:focus {
   outline: none;
-  border-color: #28a745;
-  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+  border-color: #1a8917;
+  box-shadow: 0 0 0 2px rgba(26, 137, 23, 0.1);
 }
 
-.newsletter-button {
-  padding: 0.75rem 1.5rem;
-  background-color: #28a745;
+.subscribe-button {
+  background: #1a8917;
   color: white;
   border: none;
+  padding: 0.75rem 1.5rem;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.newsletter-button:hover {
-  background-color: #218838;
+.subscribe-button:hover {
+  background: #157a13;
 }
 
-.newsletter-button:disabled {
-  background-color: #6c757d;
+.subscribe-button:disabled {
+  background: #ccc;
   cursor: not-allowed;
 }
 

@@ -4,9 +4,9 @@
   command = "npm run build"
 
 [dev]
-  command = "npm run start"
+  command = "npm start"
   port = 3000
-  targetPort = 3001
+  targetPort = 3000
 
 [[redirects]]
   from = "/*"
@@ -31,15 +31,21 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src 'self' data: https:; connect-src 'self' https://api.netlify.com;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.netlify.com;"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "18"
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
 
 [[plugins]]
   package = "@netlify/plugin-emails"
+
+[[plugins]]
+  package = "@netlify/plugin-forms"
 
 [functions]
   directory = "functions"
@@ -50,4 +56,7 @@
 
 [forms]
   honeypot = "bot-field"
-  recaptcha = true 
+  recaptcha = true
+
+[functions.send-weekly-digest]
+  schedule = "0 9 * * 0"  # Run at 9 AM every Sunday 

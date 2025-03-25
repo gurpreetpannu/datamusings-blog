@@ -4,84 +4,74 @@ import '../styles.css';
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsSubmitting(true);
     setStatus('');
-    setError('');
 
     try {
-      console.log('Submitting newsletter subscription for:', email);
-      const response = await fetch('/.netlify/functions/newsletter', {
+      const response = await fetch('/.netlify/functions/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          email,
-          action: 'subscribe'
-        }),
+        body: JSON.stringify({ email }),
       });
-
-      const data = await response.json();
-      console.log('Newsletter subscription response:', data);
 
       if (response.ok) {
         setStatus('success');
         setEmail('');
       } else {
+        const error = await response.json();
+        console.error('Subscription error:', error);
         setStatus('error');
-        setError(data.message || data.error || 'Failed to subscribe. Please try again.');
-        console.error('Subscription error:', data);
       }
     } catch (error) {
-      console.error('Newsletter subscription error:', error);
+      console.error('Subscription error:', error);
       setStatus('error');
-      setError('Failed to subscribe. Please try again later.');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="newsletter-container">
-      <div className="newsletter-content">
-        <h2>Subscribe to My Newsletter</h2>
-        <p className="newsletter-description">
-          Get the latest posts delivered straight to your inbox.
-        </p>
-        <form onSubmit={handleSubmit} className="newsletter-form">
+      <h3>Subscribe to the Newsletter</h3>
+      <p>Get weekly updates on new posts and data science insights!</p>
+      
+      <form onSubmit={handleSubmit} className="newsletter-form">
+        <div className="form-group">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
             required
-            className="newsletter-input"
-            disabled={isLoading}
+            disabled={isSubmitting}
           />
-          <button 
-            type="submit" 
-            className="newsletter-button"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Subscribing...' : 'Subscribe'}
-          </button>
-        </form>
+        </div>
+        
         {status === 'success' && (
-          <p className="newsletter-success">
-            Thanks for subscribing! Please check your email to confirm your subscription.
+          <p className="success-message">
+            Thank you for subscribing! You&apos;ll receive our weekly digest every Sunday.
           </p>
         )}
         {status === 'error' && (
-          <p className="newsletter-error">
-            {error}
+          <p className="error-message">
+            Sorry, there was an error subscribing. Please try again.
           </p>
         )}
-      </div>
+
+        <button
+          type="submit"
+          className="subscribe-button"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Subscribing...' : 'Subscribe'}
+        </button>
+      </form>
     </div>
   );
 };
