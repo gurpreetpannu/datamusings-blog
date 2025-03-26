@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getAllPosts, searchPosts } from "../utils/posts";
+import { getAllPosts } from "../utils/posts";
 import Newsletter from "./Newsletter";
 import SEO from "./SEO";
 import "../styles.css";
+import Post from "./Post";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestedTags, setSuggestedTags] = useState([]);
+  const [allTags, setAllTags] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -17,6 +20,10 @@ const Home = () => {
         const allPosts = await getAllPosts();
         setPosts(allPosts);
         setFilteredPosts(allPosts);
+        
+        // Extract all unique tags
+        const tags = [...new Set(allPosts.flatMap(post => post.tags || []))];
+        setAllTags(tags);
       } catch (error) {
         console.error('Error loading posts:', error);
       } finally {
@@ -27,19 +34,42 @@ const Home = () => {
     loadPosts();
   }, []);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) {
-      setFilteredPosts(posts);
-      return;
+  useEffect(() => {
+    // Filter posts based on search query and selected tag
+    let filtered = [...posts];
+    
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (post) =>
+          post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.tags.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+      );
     }
 
-    try {
-      const results = await searchPosts(searchTerm);
-      setFilteredPosts(results);
-    } catch (error) {
-      console.error('Error searching posts:', error);
+    if (selectedTag) {
+      filtered = filtered.filter((post) =>
+        post.tags.includes(selectedTag)
+      );
     }
+
+    setFilteredPosts(filtered);
+
+    // Update suggested tags based on search query
+    if (searchQuery) {
+      const suggestions = allTags.filter((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSuggestedTags(suggestions);
+    } else {
+      setSuggestedTags([]);
+    }
+  }, [searchQuery, selectedTag, posts, allTags]);
+
+  const handleTagClick = (tag) => {
+    setSelectedTag(selectedTag === tag ? null : tag);
   };
 
   if (isLoading) {
@@ -62,48 +92,48 @@ const Home = () => {
         }
       }} />
       
-      <form onSubmit={handleSearch} className="search-form">
+      <div className="search-section">
         <input
           type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search posts..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
-        <button type="submit" className="search-button">
-          Search
-        </button>
-      </form>
+        {suggestedTags.length > 0 && (
+          <div className="suggested-tags">
+            <p>Suggested tags:</p>
+            <div className="tag-list">
+              {suggestedTags.map((tag) => (
+                <button
+                  key={tag}
+                  className="tag"
+                  onClick={() => {
+                    setSelectedTag(tag);
+                    setSearchQuery("");
+                    setSuggestedTags([]);
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
       
       <section className="posts-section">
         {filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
-            <article key={post.id} className="post">
-              <div className="post-content">
-                <h2 className="post-title">
-                  <Link to={`/post/${post.slug}`}>{post.title}</Link>
-                </h2>
-                <p className="post-excerpt">{post.excerpt}</p>
-                <div className="post-meta">
-                  <span>{post.author}</span>
-                  <span>•</span>
-                  <span>{post.date}</span>
-                  <span>•</span>
-                  <span>{post.readTime}</span>
-                </div>
-                {post.tags && (
-                  <div className="post-tags">
-                    {post.tags.map(tag => (
-                      <span key={tag} className="tag">{tag}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </article>
+            <Post
+              key={post.slug}
+              post={post}
+              onTagClick={handleTagClick}
+            />
           ))
         ) : (
           <p className="no-posts">
-            {searchTerm ? 'No posts found matching your search.' : 'No posts available.'}
+            {searchQuery ? 'No posts found matching your search.' : 'No posts available.'}
           </p>
         )}
       </section>

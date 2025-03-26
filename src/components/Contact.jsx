@@ -9,45 +9,47 @@ const Contact = () => {
     subject: '',
     message: ''
   });
-  const [status, setStatus] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const encode = (data) => {
-    return Object.keys(data)
-      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-      .join("&");
-  };
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setStatus('');
+    setError(null);
 
     try {
       const response = await fetch("/", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({ "form-name": "contact", ...formData })
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          "form-name": "contact",
+          ...formData,
+        }),
       });
 
       if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
       } else {
-        setStatus('error');
+        throw new Error("Form submission failed");
       }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setStatus('error');
-    } finally {
-      setIsSubmitting(false);
+    } catch (err) {
+      setError("There was an error submitting the form. Please try again.");
+      console.error("Form submission error:", err);
     }
   };
 
@@ -72,27 +74,32 @@ const Contact = () => {
         Have a question or want to work together? Feel free to reach out!
       </p>
       
+      {/* Hidden form for Netlify Forms detection */}
       <form
         name="contact"
-        method="post"
-        onSubmit={handleSubmit}
-        className="contact-form"
         data-netlify="true"
         data-netlify-honeypot="bot-field"
+        hidden
       >
-        <input type="hidden" name="form-name" value="contact" />
-        <input type="hidden" name="bot-field" />
-        
+        <input type="text" name="name" />
+        <input type="email" name="email" />
+        <input type="text" name="subject" />
+        <textarea name="message"></textarea>
+      </form>
+
+      {/* Visible contact form */}
+      <form onSubmit={handleSubmit} className="contact-form">
         <div className="form-group">
           <label htmlFor="name">Name</label>
           <input
             type="text"
-            name="name"
             id="name"
+            name="name"
             value={formData.name}
             onChange={handleChange}
             required
-            disabled={isSubmitting}
+            autoComplete="name"
+            placeholder="Your name"
           />
         </div>
 
@@ -100,12 +107,13 @@ const Contact = () => {
           <label htmlFor="email">Email</label>
           <input
             type="email"
-            name="email"
             id="email"
+            name="email"
             value={formData.email}
             onChange={handleChange}
             required
-            disabled={isSubmitting}
+            autoComplete="email"
+            placeholder="your.email@example.com"
           />
         </div>
 
@@ -113,46 +121,41 @@ const Contact = () => {
           <label htmlFor="subject">Subject</label>
           <input
             type="text"
-            name="subject"
             id="subject"
+            name="subject"
             value={formData.subject}
             onChange={handleChange}
             required
-            disabled={isSubmitting}
+            autoComplete="subject"
+            placeholder="What's this about?"
           />
         </div>
 
         <div className="form-group">
           <label htmlFor="message">Message</label>
           <textarea
-            name="message"
             id="message"
+            name="message"
             value={formData.message}
             onChange={handleChange}
             required
-            disabled={isSubmitting}
+            placeholder="Your message..."
+            rows="5"
           />
         </div>
 
-        {status === 'success' && (
-          <p className="success-message">
-            Thank you for your message! I&apos;ll get back to you soon.
-          </p>
-        )}
-        {status === 'error' && (
-          <p className="error-message">
-            Sorry, there was an error sending your message. Please try again.
-          </p>
-        )}
-
-        <button
-          type="submit"
-          className="submit-button"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Sending...' : 'Send Message'}
+        <button type="submit" className="submit-button">
+          Send Message
         </button>
       </form>
+
+      {submitted && (
+        <div className="success-message">
+          Thank you for your message! I&apos;ll get back to you soon.
+        </div>
+      )}
+
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };

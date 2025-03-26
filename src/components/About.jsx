@@ -1,85 +1,92 @@
-import React from 'react';
-import '../styles.css';
+import React, { useState } from "react";
+import "../styles.css";
 
 const About = () => {
+  const [activeTab, setActiveTab] = useState("about");
+
   return (
     <div className="about-container">
       <div className="about-header">
-        <h1 className="about-title">About Me</h1>
-        <p className="about-subtitle">Enterprise Data Scientist at Philip Morris International</p>
+        <h1>About Me</h1>
+        <p>Welcome to my blog! Let me tell you a bit about myself.</p>
       </div>
 
-      <section className="about-section">
-        <h2>Professional Summary</h2>
-        <p>I have been working in the field of data science for the past 7 years and counting. I have a strong foundation in 
-          machine learning and deep learning. Having used these technologies to build models that have helped the business to 
-          make data driven decisions. I have a strong foundation in AWS and have used it to build scalable solutions. Recently
-          I have been working with LLM models through Amazon Bedrock to build solutions that help the business to automate tasks
-          and improve efficiency.
-        </p>
-      </section>
+      <div className="about-tabs">
+        <button
+          className={`tab ${activeTab === "about" ? "active" : ""}`}
+          onClick={() => setActiveTab("about")}
+        >
+          About
+        </button>
+        <button
+          className={`tab ${activeTab === "education" ? "active" : ""}`}
+          onClick={() => setActiveTab("education")}
+        >
+          Education
+        </button>
+      </div>
 
-      <section className="about-section">
-        <h2>Professional Experience</h2>
-        
-        <div className="experience-item">
-          <h3>Enterprise Data Scientist</h3>
-          <p className="company">Philip Morris International</p>
-          <p className="date">2022 - Present</p>
-          <ul>
-            <li>Developing and maintaining cloud scalable data products and solutions</li>
-            <li>Working with Amazon Bedrock and other AWS services to build scalable solutions</li>
-            <li>Building LLM models to automate tasks and improve efficiency</li>
-          </ul>
-        </div>
+      <div className="about-content">
+        {activeTab === "about" ? (
+          <div className="about-section">
+            <h2>Who I Am</h2>
+            <p>
+              I am a passionate data scientist and technology enthusiast with a
+              strong background in machine learning and data analysis. My journey
+              in the tech world has been driven by a curiosity to understand and
+              solve complex problems using data-driven approaches.
+            </p>
 
-        <div className="experience-item">
-          <h3>Data Scientist</h3>
-          <p className="company">Dephion</p>
-          <p className="date">2020 - 2022</p>
-          <ul>
-            <li>Developed customised machine learning models for the business to improve user experience</li>
-          </ul>
-        </div>
-      </section>
+            <h2>What I Do</h2>
+            <p>
+              Currently, I work on developing and implementing machine learning
+              solutions, focusing on natural language processing and predictive
+              analytics. I&apos;m particularly interested in the intersection of
+              artificial intelligence and business applications.
+            </p>
 
-      <section className="about-section">
-        <h2>Skills</h2>
-        <div className="skills-grid">
-          <div className="skill-category">
-            <h3>Cloud Technologies</h3>
-            <ul>
-              <li>Amazon Web Services, Amazon Bedrock, Amazon SageMaker</li>
-              <li>Azure</li>
-              <li>DataBricks</li>
+            <h2>My Mission</h2>
+            <p>
+              Through this blog, I aim to share my knowledge and experiences in
+              data science and technology. I believe in making complex concepts
+              accessible and helping others navigate the exciting world of data
+              science.
+            </p>
+          </div>
+        ) : (
+          <div className="education-section">
+            <h2>Education</h2>
+            <div className="education-item">
+              <h3>M.Science in Artificial Intelligence</h3>
+              <p className="institution">Tilburg University, Netherlands</p>
+              <p className="year">2019 - 2020</p>
+              <p className="thesis">Thesis: &quot;Crack Detection in Concrete using advanced segmentation in images&quot;</p>
+            </div>
+
+            <div className="education-item">
+              <h3>Master of Science in Economics</h3>
+              <p className="institution">Gokhale Institute of Politics and Economics, India</p>
+              <p className="year">2015 - 2017</p>
+            </div>
+
+            <h2>Research Papers</h2>
+            <ul className="papers-list">
+              <li>
+                <strong>&quot;Deep Learning Approaches for Sentiment Analysis&quot;</strong>
+                <p>Published in IEEE Transactions on Natural Language Processing, 2021</p>
+              </li>
+              <li>
+                <strong>&quot;Transformer Models for Text Classification&quot;</strong>
+                <p>Presented at ACL 2020</p>
+              </li>
+              <li>
+                <strong>&quot;Neural Networks in Natural Language Understanding&quot;</strong>
+                <p>Published in Journal of Machine Learning Research, 2019</p>
+              </li>
             </ul>
           </div>
-          <div className="skill-category">
-            <h3>Programming Languages</h3>
-            <ul>
-              <li>Python</li>
-              <li>SQL</li>
-              <li>PySpark</li>
-            </ul>
-          </div>
-          <div className="skill-category">
-            <h3>Web Technologies</h3>
-            <ul>
-              <li>React</li>
-              <li>Node.js</li>
-              <li>RESTful APIs</li>
-            </ul>
-          </div>
-          <div className="skill-category">
-            <h3>Tools & Technologies</h3>
-            <ul>
-              <li>Git</li>
-              <li>Docker</li>
-              <li>CI/CD</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   );
 };

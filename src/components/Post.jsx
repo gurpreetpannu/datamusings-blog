@@ -2,36 +2,33 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles.css';
 
-const Post = ({ post }) => {
+const Post = ({ post, onTagClick }) => {
+  const { title, excerpt, date, slug, tags } = post;
+
   return (
-    <article className="post">
+    <article className="post-card">
       <div className="post-content">
-        <Link to={`/post/${post.slug}`} className="post-title">
-          {post.title}
-        </Link>
-        <p className="post-excerpt">
-          {post.excerpt || post.content.substring(0, 150)}...
-        </p>
+        <h2>
+          <Link to={`/post/${slug}`} className="post-title">
+            {title}
+          </Link>
+        </h2>
+        <p className="post-excerpt">{excerpt}</p>
         <div className="post-meta">
-          <span>{post.author || 'By Author'}</span>
-          <span>•</span>
-          <span>{post.readTime || '5 min read'}</span>
-        </div>
-        {post.tags && post.tags.length > 0 && (
+          <span className="post-date">{date}</span>
           <div className="post-tags">
-            {post.tags.map(tag => (
-              <span key={tag} className="tag">{tag}</span>
+            {tags.map((tag) => (
+              <button
+                key={tag}
+                className="tag"
+                onClick={() => onTagClick(tag)}
+              >
+                {tag}
+              </button>
             ))}
           </div>
-        )}
+        </div>
       </div>
-      {post.image && (
-        <img 
-          src={post.image} 
-          alt={post.title} 
-          className="post-image"
-        />
-      )}
     </article>
   );
 };
