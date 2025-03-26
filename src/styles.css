@@ -826,6 +826,13 @@ body {
   margin-bottom: 2rem;
 }
 
+.about-header h1 {
+  color: #1a8917;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  text-align: center;
+}
+
 .about-tabs {
   display: flex;
   justify-content: center;

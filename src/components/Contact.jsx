@@ -1,28 +1,32 @@
-import React, { useState } from 'react';
-import SEO from './SEO';
-import '../styles.css';
+import React, { useState, useCallback } from "react";
+import SEO from "./SEO";
+import "../styles.css";
+
+const initialFormState = {
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+};
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
+  const [formData, setFormData] = useState(initialFormState);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/", {
@@ -38,20 +42,17 @@ const Contact = () => {
 
       if (response.ok) {
         setSubmitted(true);
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
+        setFormData(initialFormState);
       } else {
         throw new Error("Form submission failed");
       }
     } catch (err) {
       setError("There was an error submitting the form. Please try again.");
       console.error("Form submission error:", err);
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }, [formData]);
 
   return (
     <div className="contact-container">
@@ -99,6 +100,7 @@ const Contact = () => {
             onChange={handleChange}
             required
             placeholder="Your name"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -112,6 +114,7 @@ const Contact = () => {
             onChange={handleChange}
             required
             placeholder="your.email@example.com"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -125,6 +128,7 @@ const Contact = () => {
             onChange={handleChange}
             required
             placeholder="What's this about?"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -138,11 +142,16 @@ const Contact = () => {
             required
             placeholder="Your message..."
             rows="5"
+            disabled={isSubmitting}
           />
         </div>
 
-        <button type="submit" className="submit-button">
-          Send Message
+        <button 
+          type="submit" 
+          className="submit-button"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Sending..." : "Send Message"}
         </button>
       </form>
 

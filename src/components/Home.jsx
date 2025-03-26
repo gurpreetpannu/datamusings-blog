@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { getAllPosts } from "../utils/posts";
 import Newsletter from "./Newsletter";
 import SEO from "./SEO";
@@ -12,131 +12,113 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestedTags, setSuggestedTags] = useState([]);
   const [allTags, setAllTags] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        const allPosts = await getAllPosts();
-        setPosts(allPosts);
-        setFilteredPosts(allPosts);
-        
-        // Extract all unique tags
-        const tags = [...new Set(allPosts.flatMap(post => post.tags || []))];
-        setAllTags(tags);
-      } catch (error) {
-        console.error('Error loading posts:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadPosts();
+  // Memoize the unique tags extraction
+  const extractUniqueTags = useCallback((posts) => {
+    const tags = new Set();
+    posts.forEach((post) => {
+      post.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags);
   }, []);
 
+  // Fetch posts and extract tags
   useEffect(() => {
-    // Filter posts based on search query and selected tag
-    let filtered = [...posts];
-    
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          post.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-      );
-    }
+    const fetchPosts = async () => {
+      const fetchedPosts = await getAllPosts();
+      setPosts(fetchedPosts);
+      setAllTags(extractUniqueTags(fetchedPosts));
+    };
+    fetchPosts();
+  }, [extractUniqueTags]);
 
-    if (selectedTag) {
-      filtered = filtered.filter((post) =>
-        post.tags.includes(selectedTag)
-      );
-    }
+  // Memoize filtered posts
+  const getFilteredPosts = useCallback(() => {
+    return posts.filter((post) => {
+      const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesTag = !selectedTag || post.tags.includes(selectedTag);
+      return matchesSearch && matchesTag;
+    });
+  }, [posts, searchQuery, selectedTag]);
 
-    setFilteredPosts(filtered);
+  // Update filtered posts when dependencies change
+  useEffect(() => {
+    setFilteredPosts(getFilteredPosts());
+  }, [getFilteredPosts]);
 
-    // Update suggested tags based on search query
-    if (searchQuery) {
-      const suggestions = allTags.filter((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSuggestedTags(suggestions);
-    } else {
-      setSuggestedTags([]);
-    }
-  }, [searchQuery, selectedTag, posts, allTags]);
+  // Memoize tag suggestions
+  const getSuggestedTags = useCallback(() => {
+    if (!searchQuery) return [];
+    return allTags.filter((tag) =>
+      tag.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [allTags, searchQuery]);
 
-  const handleTagClick = (tag) => {
-    setSelectedTag(selectedTag === tag ? null : tag);
-  };
+  // Update suggested tags when search query changes
+  useEffect(() => {
+    setSuggestedTags(getSuggestedTags());
+  }, [getSuggestedTags]);
 
-  if (isLoading) {
-    return <div className="loading">Loading posts...</div>;
-  }
+  const handleTagClick = useCallback((tag) => {
+    setSelectedTag(tag === selectedTag ? null : tag);
+  }, [selectedTag]);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
   return (
-    <div className="home">
+    <div className="home-container">
       <SEO post={{
-        title: "Data Musings - Gurpreet Pannu",
-        excerpt: "Thoughts on data science, technology, and programming",
+        title: "Data Musings - A Blog About Data Science and Technology",
+        excerpt: "Explore insights about data science, machine learning, and technology through in-depth articles and tutorials.",
         seo: {
-          title: "Data Musings - Gurpreet Pannu's Blog",
-          description: "Explore articles about data science, technology, programming, and software development.",
-          keywords: ["data science", "technology", "programming", "software development", "AI"],
-          ogTitle: "Data Musings - Gurpreet Pannu's Blog",
-          ogDescription: "Explore articles about data science, technology, programming, and software development.",
-          ogImage: "/images/logo.svg",
+          title: "Data Musings - A Blog About Data Science and Technology",
+          description: "Explore insights about data science, machine learning, and technology through in-depth articles and tutorials.",
+          keywords: ["data science", "machine learning", "technology", "blog", "tutorials"],
+          ogTitle: "Data Musings - A Blog About Data Science and Technology",
+          ogDescription: "Explore insights about data science, machine learning, and technology through in-depth articles and tutorials.",
+          ogImage: "/images/home-og.jpg",
           canonicalUrl: "https://datamusings.blog"
         }
       }} />
-      
+
       <div className="search-section">
         <input
           type="text"
+          className="search-input"
           placeholder="Search posts..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input"
+          onChange={handleSearchChange}
         />
         {suggestedTags.length > 0 && (
           <div className="suggested-tags">
-            <p>Suggested tags:</p>
-            <div className="tag-list">
-              {suggestedTags.map((tag) => (
-                <button
-                  key={tag}
-                  className="tag"
-                  onClick={() => {
-                    setSelectedTag(tag);
-                    setSearchQuery("");
-                    setSuggestedTags([]);
-                  }}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
+            {suggestedTags.map((tag) => (
+              <button
+                key={tag}
+                className="tag"
+                onClick={() => handleTagClick(tag)}
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         )}
       </div>
-      
-      <section className="posts-section">
+
+      <div className="posts-grid">
         {filteredPosts.length > 0 ? (
-          filteredPosts.map(post => (
-            <Post
-              key={post.slug}
-              post={post}
-              onTagClick={handleTagClick}
-            />
+          filteredPosts.map((post) => (
+            <Post key={post.slug} post={post} onTagClick={handleTagClick} />
           ))
         ) : (
-          <p className="no-posts">
-            {searchQuery ? 'No posts found matching your search.' : 'No posts available.'}
-          </p>
+          <div className="no-results">
+            No posts found matching your search criteria.
+          </div>
         )}
-      </section>
+      </div>
+
       <Newsletter />
     </div>
   );
