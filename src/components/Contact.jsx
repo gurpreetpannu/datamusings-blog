@@ -98,7 +98,6 @@ const Contact = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            autoComplete="name"
             placeholder="Your name"
           />
         </div>
@@ -112,7 +111,6 @@ const Contact = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            autoComplete="email"
             placeholder="your.email@example.com"
           />
         </div>
@@ -126,7 +124,6 @@ const Contact = () => {
             value={formData.subject}
             onChange={handleChange}
             required
-            autoComplete="subject"
             placeholder="What's this about?"
           />
         </div>
@@ -139,7 +136,6 @@ const Contact = () => {
             value={formData.message}
             onChange={handleChange}
             required
-            aria-label="Your message"
             placeholder="Your message..."
             rows="5"
           />
