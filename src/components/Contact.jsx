@@ -139,6 +139,7 @@ const Contact = () => {
             value={formData.message}
             onChange={handleChange}
             required
+            aria-label="Your message"
             placeholder="Your message..."
             rows="5"
           />
