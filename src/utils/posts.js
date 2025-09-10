@@ -1,5 +1,5 @@
 // Import all posts directly
-import { post as cursorPost } from '../posts/building-with-cursor';
+import { post as cursorPost } from '../posts/building-with-cursor.jsx';
 
 // Function to get all posts
 export async function getAllPosts() {
