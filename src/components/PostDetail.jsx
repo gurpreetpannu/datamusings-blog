@@ -19,6 +19,13 @@ const PostDetail = () => {
       try {
         const postData = await getPostBySlug(slug);
         if (postData) {
+          // Fetch README content
+          const readmeResponse = await fetch('/README.md');
+          const readmeText = await readmeResponse.text();
+
+          // Append README content to post content
+          postData.content += `<br/><hr/><br/><h2>Project Setup</h2><pre>${readmeText}</pre>`;
+
           setPost(postData);
           // Load comments from localStorage
           const storedComments = localStorage.getItem(`comments-${slug}`);
