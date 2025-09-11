@@ -105,6 +105,7 @@ export const post = {
   </p>
   ` ,
   image: '', // Path to image in src/assets/images/posts/
+  coverPhoto:'/images/dino/dino-cover.png', 
   author: 'Gurpreet Pannu',
   date: new Date().toLocaleDateString('en-GB'),
   readTime: '', // Will be calculated
@@ -116,13 +117,13 @@ export const post = {
     keywords: ["GenAI", "Meta", "DINOv3", "computer vision", "AI"], // Meta keywords
     ogTitle: 'Dino V3: What is Meta upto?', // Open Graph title
     ogDescription: 'Here I explain the newest foundational vision model by Meta and why is it significant.', // Open Graph description
-    ogImage: '', // Open Graph image URL
+    ogImage: '/images/dino/dino-cover.png', // Open Graph image URL
     canonicalUrl: 'https://datamusings.blog/post/dino-v3', // Canonical URL
     structuredData: {
       type: 'Article',
-      headline: '', // Article headline
-      description: '', // Article description
-      image: '', // Article image URL
+      headline: 'Dino V3: What is Meta upto?', // Article headline
+      description: 'Here I explain the newest foundational vision model by Meta and why is it significant.', // Article description
+      image: '/images/dino/dino-cover.png', // Article image URL
       author: {
         '@type': 'Person',
         name: 'Gurpreet Pannu'
@@ -171,7 +172,7 @@ export const generateMetaTags = (post) => {
     keywords: post.seo?.keywords?.join(', ') || 'blog, technology, programming, software development',
     ogTitle: post.seo?.ogTitle || post.title || 'Gurpreet Pannu Blog',
     ogDescription: post.seo?.ogDescription || post.excerpt || 'Thoughts on technology, programming, and more',
-    ogImage: post.seo?.ogImage || post.image || '/images/blog-og.jpg',
+    ogImage: post.seo?.ogImage || post.image ? post.image : '/images/blog-og.jpg',
     canonicalUrl: post.seo?.canonicalUrl || `https://datamusings.blog/post/${post.slug || ''}`
   };
 };
