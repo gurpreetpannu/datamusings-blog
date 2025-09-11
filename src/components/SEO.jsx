@@ -6,6 +6,8 @@ const SEO = ({ post }) => {
   const metaTags = generateMetaTags(post);
   const structuredData = generateStructuredData(post);
 
+  const coverPhotoUrl = post?.coverPhoto;
+
   return (
     <Helmet>
       {/* Basic Meta Tags */}
