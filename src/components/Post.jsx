@@ -1,32 +1,34 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import '../styles.css';
+import React, { memo } from "react";
+import { Link } from "react-router-dom";
+import "../styles.css";
 
-const Post = ({ post }) => {
+const Post = memo(({ post, onTagClick }) => {
+  const { title, excerpt, date, slug, tags } = post;
+
   return (
-    <article className="post">
-      <div className="post-content">
-        <Link to={`/post/${post.slug}`} className="post-title">
-          {post.title}
-        </Link>
-        <p className="post-excerpt">
-          {post.content.substring(0, 150)}...
-        </p>
-        <div className="post-meta">
-          <span>By Author</span>
-          <span>•</span>
-          <span>5 min read</span>
+    <article className="post-card">
+      <Link to={`/post/${slug}`} className="post-link">
+        <h2 className="post-title">{title}</h2>
+      </Link>
+      <p className="post-excerpt">{excerpt}</p>
+      <div className="post-meta">
+        <span className="post-date">{date}</span>
+        <div className="post-tags">
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              className="tag"
+              onClick={() => onTagClick(tag)}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
       </div>
-      {post.image && (
-        <img 
-          src={post.image} 
-          alt={post.title} 
-          className="post-image"
-        />
-      )}
     </article>
   );
-};
+});
+
+Post.displayName = "Post";
 
 export default Post;

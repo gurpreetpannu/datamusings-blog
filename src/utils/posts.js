@@ -1,11 +1,12 @@
 // Import all posts directly
-import { post as cursorPost } from '../posts/building-with-cursor';
+import { post as cursorPost } from '../posts/building-with-cursor.jsx';
+import { post as dinoPost } from '../posts/dino-v3.jsx';
 
 // Function to get all posts
 export async function getAllPosts() {
   // For now, we'll return our posts array directly
-  const posts = [cursorPost];
-  
+  const posts = [cursorPost, dinoPost];
+
   // Sort posts by date (newest first)
   return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
