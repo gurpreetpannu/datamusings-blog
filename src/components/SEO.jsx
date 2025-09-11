@@ -16,7 +16,7 @@ const SEO = ({ post }) => {
       {/* Open Graph Meta Tags */}
       <meta property="og:title" content={metaTags.ogTitle} />
       <meta property="og:description" content={metaTags.ogDescription} />
-      <meta property="og:image" content={metaTags.ogImage} />
+      <meta property="og:image" content={coverPhotoUrl || metaTags.ogImage} />
       <meta property="og:type" content="article" />
       <meta property="og:url" content={metaTags.canonicalUrl} />
       
@@ -24,7 +24,7 @@ const SEO = ({ post }) => {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={metaTags.ogTitle} />
       <meta name="twitter:description" content={metaTags.ogDescription} />
-      <meta name="twitter:image" content={metaTags.ogImage} />
+      <meta name="twitter:image" content={coverPhotoUrl || metaTags.ogImage} />
       
       {/* Canonical URL */}
       <link rel="canonical" href={metaTags.canonicalUrl} />
