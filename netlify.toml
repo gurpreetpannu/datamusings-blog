@@ -44,8 +44,6 @@
 [[plugins]]
   package = "@netlify/plugin-emails"
 
-[[plugins]]
-  package = "@netlify/plugin-forms"
 
 [functions]
   directory = "functions"
