@@ -104,7 +104,7 @@ export const post = {
     </ul>
   </p>
   ` ,
-  image: '', // Path to image in src/assets/images/posts/
+  image: '/images/dino/dino-cover.png', // Path to image in src/assets/images/posts/
   author: 'Gurpreet Pannu',
   date: new Date().toLocaleDateString('en-GB'),
   readTime: '', // Will be calculated
@@ -171,7 +171,7 @@ export const generateMetaTags = (post) => {
     keywords: post.seo?.keywords?.join(', ') || 'blog, technology, programming, software development',
     ogTitle: post.seo?.ogTitle || post.title || 'Gurpreet Pannu Blog',
     ogDescription: post.seo?.ogDescription || post.excerpt || 'Thoughts on technology, programming, and more',
-    ogImage: post.seo?.ogImage || post.image || '/images/blog-og.jpg',
+    ogImage: post.seo?.ogImage || post.image ? post.image : '/images/blog-og.jpg',
     canonicalUrl: post.seo?.canonicalUrl || `https://datamusings.blog/post/${post.slug || ''}`
   };
 };
