@@ -107,7 +107,7 @@ export const post = {
   image: '', // Path to image in src/assets/images/posts/
   coverPhoto:'/images/dino/dino-cover.png', 
   author: 'Gurpreet Pannu',
-  date: new Date().toLocaleDateString('en-GB'),
+  date: new Date().toLocaleDateString('en-US'),
   readTime: '', // Will be calculated
   tags: [],
   status: 'published', // draft, published, archived
