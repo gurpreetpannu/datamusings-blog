@@ -94,10 +94,10 @@ const PostDetail = () => {
         <h1 className="post-title">{post.title}</h1>
         <div className="post-meta">
           <span>{post.author}</span>
-          <span>•</span>
+          <span> </span>
           <span>{post.date}</span>
-          <span>•</span>
-          <span>{post.readTime}</span>
+          <span> </span>
+          <span>{post.readTime} min read</span>
         </div>
         
         {post.image && (

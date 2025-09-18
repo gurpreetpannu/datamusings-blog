@@ -12,7 +12,7 @@ const Post = memo(({ post, onTagClick }) => {
       </Link>
       <p className="post-excerpt">{excerpt}</p>
       <div className="post-meta">
-        <span className="post-date">{date}</span>
+        <span className="post-date">{date} • {post.readTime} min read</span>
         <div className="post-tags">
           {tags.map((tag) => (
             <button

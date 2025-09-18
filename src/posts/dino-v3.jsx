@@ -107,9 +107,9 @@ export const post = {
   image: '', // Path to image in src/assets/images/posts/
   coverPhoto:'/images/dino/dino-cover.png', 
   author: 'Gurpreet Pannu',
-  date: new Date().toLocaleDateString('en-US'),
+  date:"12/09/2025" ,
   readTime: '', // Will be calculated
-  tags: [],
+  tags: ["GenAI", "Meta", "DINOv3", "computer vision", "AI"], // Meta keywords
   status: 'published', // draft, published, archived
   seo: {
     title: 'Dino V3: What is Meta upto?', // SEO title (can be different from post title)
