@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPostBySlug } from '../utils/posts';
 import SEO from './SEO';
-import Newsletter from './Newsletter';
 import '../styles.css';
 
 const PostDetail = () => {
@@ -171,10 +170,6 @@ const PostDetail = () => {
           )}
         </div>
       </section>
-
-      <div className="newsletter-section">
-        <Newsletter />
-      </div>
     </div>
   );
 };
