@@ -4,10 +4,8 @@ import SEO from "./SEO";
 import "../styles.css";
 import Post from "./Post";
 
-const SIDEPANE_WIDTH = 260;
-const SIDEPANE_GAP = 40; // gap between posts and sidepane
-
 const Home = () => {
+
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(""); // NEW: selected month
   const [searchQuery, setSearchQuery] = useState("");
@@ -119,32 +117,9 @@ const Home = () => {
   });
 
   return (
-    <div
-      className="home-outer-wrapper"
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        width: "100%",
-        minHeight: "100vh",
-        background: "#fff", // Remove grey tint
-        position: "relative",
-      }}
-    >
+    <div className="home-outer-wrapper">
       {/* Main content */}
-      <div
-        className="main-content"
-        style={{
-          maxWidth: 800,
-          width: "100%",
-          borderRadius: 12,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-          padding: 32,
-          minHeight: "100vh",
-          background: "#fff",
-        }}
-      >
+      <div className="main-content">
         <SEO
           post={{
             title: "Data Musings - A Blog About Data Science and Technology",
@@ -219,31 +194,16 @@ const Home = () => {
             </div>
           ))}
           {Object.keys(filteredMonthlyPosts).length === 0 && (
-            <div style={{ marginTop: 32, color: "#888" }}>
+            <div className="no-posts-found">
               No posts found for the selected filters.
             </div>
           )}
         </div>
       </div>
 
-      {/* Sidepane fixed to the right of posts */}
-      <aside
-        className="sidepane"
-        style={{
-          position: "fixed",
-          top: `calc(64px + 24px)`, // adjust header height if needed
-          left: `calc(50% + 400px + ${SIDEPANE_GAP / 2}px)`, // 400px is half of 800px (main content width)
-          width: SIDEPANE_WIDTH,
-          minWidth: SIDEPANE_WIDTH,
-          maxWidth: SIDEPANE_WIDTH,
-          background: "#fff",
-          borderRadius: 12,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-          padding: 20,
-          zIndex: 10,
-        }}
-      >
-        <div>
+      {/* Sidepane */}
+      <aside className="sidepane">
+        <div className="filter-group">
           <h4>Filter by Month</h4>
           <ul className="month-list">
             {sortedMonths.map((monthKey) => (
@@ -251,14 +211,6 @@ const Home = () => {
                 <button
                   className={monthKey === selectedMonth ? "active" : ""}
                   onClick={() => handleMonthClick(monthKey)}
-                  style={{
-                    background: monthKey === selectedMonth ? "#e0e0e0" : "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "4px 0",
-                    width: "100%",
-                    textAlign: "left",
-                  }}
                 >
                   {formatMonthLabel(monthKey)}
                 </button>
@@ -266,7 +218,7 @@ const Home = () => {
             ))}
           </ul>
         </div>
-        <div style={{ marginTop: 24 }}>
+        <div className="filter-group">
           <h4>Filter by Tag</h4>
           <div className="all-tags">
             {Array.from(allTags)
@@ -276,16 +228,6 @@ const Home = () => {
                   key={tag}
                   className={selectedTags.includes(tag) ? "tag active" : "tag"}
                   onClick={() => handleTagClick(tag)}
-                  style={{
-                    margin: "2px",
-                    background: selectedTags.includes(tag)
-                      ? "#b3e5fc"
-                      : "#f0f0f0",
-                    border: "none",
-                    borderRadius: "12px",
-                    padding: "4px 10px",
-                    cursor: "pointer",
-                  }}
                 >
                   {tag}
                 </button>
@@ -293,18 +235,7 @@ const Home = () => {
           </div>
         </div>
         {(selectedMonth || selectedTags.length > 0) && (
-          <button
-            onClick={clearFilters}
-            style={{
-              marginTop: 24,
-              background: "#ffeb3b",
-              border: "none",
-              borderRadius: "8px",
-              padding: "6px 16px",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
+          <button onClick={clearFilters} className="clear-filters">
             Clear Filters
           </button>
         )}

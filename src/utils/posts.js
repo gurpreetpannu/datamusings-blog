@@ -1,22 +1,25 @@
-// Import all posts directly
-import { post as cursorPost, calculateReadTime as cursorCalculateReadTime } from '../posts/building-with-cursor.jsx';
-import { post as dinoPost, calculateReadTime as dinoCalculateReadTime } from '../posts/dino-v3.jsx';
-import { post as chatPost, calculateReadTime as chatCalculateReadTime } from '../posts/ChatGPT.jsx';
-
 // Function to get all posts
 export async function getAllPosts() {
-  // For now, we'll return our posts array directly
-  const posts = [cursorPost, dinoPost, chatPost].map(post => ({
-    ...post,
-    readTime: post === cursorPost
-      ? cursorCalculateReadTime(post.content)
-      : post === dinoPost
-        ? dinoCalculateReadTime(post.content)
-        : chatCalculateReadTime(post.content)
+  // Use dynamic imports to improve bundle size
+  const postModules = [
+    import('../posts/building-with-cursor.jsx'),
+    import('../posts/dino-v3.jsx'),
+    import('../posts/ChatGPT.jsx')
+  ];
+
+  const modules = await Promise.all(postModules);
+
+  const posts = modules.map(mod => ({
+    ...mod.post,
+    readTime: mod.calculateReadTime(mod.post.content)
   }));
 
   // Sort posts by date (newest first)
-  return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  return posts.sort((a, b) => {
+    const dateA = new Date(a.date.split('/').reverse().join('-'));
+    const dateB = new Date(b.date.split('/').reverse().join('-'));
+    return dateB - dateA;
+  });
 }
 
 // Function to group posts by month
@@ -64,8 +67,8 @@ export async function getPostsByCategory(category) {
 export async function searchPosts(query) {
   const posts = await getAllPosts();
   const searchTerm = query.toLowerCase();
-  
-  return posts.filter(post => 
+
+  return posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm) ||
     post.excerpt.toLowerCase().includes(searchTerm) ||
     post.content.toLowerCase().includes(searchTerm) ||

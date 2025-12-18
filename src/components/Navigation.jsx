@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
+import { useTheme } from '../context/ThemeContext';
 import '../styles.css';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
 
   const toggleMenu = () => {
@@ -19,32 +21,51 @@ const Navigation = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Logo />
-        <button 
-          className="mobile-menu-button"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
-        </button>
+
+        <div className="nav-actions">
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? '🌞' : '🌙'}
+          </button>
+
+          <button
+            className="mobile-menu-button"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
+          </button>
+        </div>
+
         <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-          <Link 
-            to="/about" 
+          <Link
+            to="/"
+            className={`nav-link ${isActive('/') ? 'active' : ''}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </Link>
+          <Link
+            to="/about"
             className={`nav-link ${isActive('/about') ? 'active' : ''}`}
             onClick={() => setIsMenuOpen(false)}
           >
-            About Me
+            About
           </Link>
-          <a 
-            href="https://www.linkedin.com/in/gurpreet-pannu-62990285/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="https://www.linkedin.com/in/gurpreet-pannu-62990285/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="nav-link"
             onClick={() => setIsMenuOpen(false)}
           >
             LinkedIn
           </a>
-          <Link 
-            to="/contact" 
+          <Link
+            to="/contact"
             className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
             onClick={() => setIsMenuOpen(false)}
           >

@@ -69,12 +69,12 @@ const Contact = () => {
           canonicalUrl: "https://datamusings.blog/contact"
         }
       }} />
-      
-      <h1 className="page-title">Contact Me</h1>
-      <p className="page-description">
+
+      <h1 className="contact-title">Contact Me</h1>
+      <p className="contact-description">
         Have a question or want to work together? Feel free to reach out!
       </p>
-      
+
       {/* Hidden form for Netlify Forms detection */}
       <form
         name="contact"
@@ -146,8 +146,8 @@ const Contact = () => {
           />
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="submit-button"
           disabled={isSubmitting}
         >

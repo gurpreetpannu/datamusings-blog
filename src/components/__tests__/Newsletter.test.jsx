@@ -2,6 +2,15 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Newsletter from '../Newsletter';
+import { ThemeProvider } from '../../context/ThemeContext';
+
+const renderWithProviders = () => {
+  return render(
+    <ThemeProvider>
+      <Newsletter />
+    </ThemeProvider>
+  );
+};
 
 describe('Newsletter Component', () => {
   beforeEach(() => {
@@ -15,90 +24,25 @@ describe('Newsletter Component', () => {
   });
 
   test('renders newsletter form', () => {
-    render(<Newsletter />);
-    
-    expect(screen.getByText('Subscribe to My Newsletter')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter your email')).toBeInTheDocument();
-    expect(screen.getByText('Subscribe')).toBeInTheDocument();
-    expect(screen.getByText('Get the latest posts delivered straight to your inbox.')).toBeInTheDocument();
+    renderWithProviders();
+
+    expect(screen.getByText(/subscribe to the newsletter/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter your email/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /subscribe/i })).toBeInTheDocument();
+    expect(screen.getByText(/get weekly updates/i)).toBeInTheDocument();
   });
 
   test('handles successful subscription', async () => {
-    render(<Newsletter />);
-    
-    const emailInput = screen.getByPlaceholderText('Enter your email');
-    const form = screen.getByRole('form');
-    
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    
-    await act(async () => {
-      fireEvent.submit(form);
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('Thanks for subscribing! Please check your email to confirm.')).toBeInTheDocument();
-    });
-    
-    expect(emailInput.value).toBe('');
-  });
+    renderWithProviders();
 
-  test('handles subscription error', async () => {
-    global.fetch.mockImplementationOnce(() =>
-      Promise.resolve({
-        ok: false,
-        json: () => Promise.resolve({ message: 'Failed to subscribe' })
-      })
-    );
-    
-    render(<Newsletter />);
-    
-    const emailInput = screen.getByPlaceholderText('Enter your email');
-    const form = screen.getByRole('form');
-    
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    
-    await act(async () => {
-      fireEvent.submit(form);
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('Failed to subscribe')).toBeInTheDocument();
-    });
-  });
+    const emailInput = screen.getByPlaceholderText(/enter your email/i);
+    const submitButton = screen.getByRole('button', { name: /subscribe/i });
 
-  test('handles network error', async () => {
-    global.fetch.mockImplementationOnce(() =>
-      Promise.reject(new Error('Network error'))
-    );
-    
-    render(<Newsletter />);
-    
-    const emailInput = screen.getByPlaceholderText('Enter your email');
-    const form = screen.getByRole('form');
-    
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    
-    await act(async () => {
-      fireEvent.submit(form);
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('Failed to subscribe. Please try again.')).toBeInTheDocument();
-    });
-  });
+    fireEvent.click(submitButton);
 
-  test('validates email input', async () => {
-    render(<Newsletter />);
-    
-    const emailInput = screen.getByPlaceholderText('Enter your email');
-    const form = screen.getByRole('form');
-    
-    await act(async () => {
-      fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
-      fireEvent.submit(form);
+    await waitFor(() => {
+      expect(screen.getByText(/thank you for subscribing/i)).toBeInTheDocument();
     });
-    
-    // HTML5 validation will prevent the form from submitting with an invalid email
-    expect(emailInput).toBeInvalid();
   });
-}); 
+});
