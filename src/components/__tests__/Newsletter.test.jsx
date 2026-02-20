@@ -2,13 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Newsletter from '../Newsletter';
-import { ThemeProvider } from '../../context/ThemeContext';
 
 const renderWithProviders = () => {
   return render(
-    <ThemeProvider>
-      <Newsletter />
-    </ThemeProvider>
+    <Newsletter />
   );
 };
 

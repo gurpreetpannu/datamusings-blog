@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Home from '../Home';
-import { ThemeProvider } from '../../context/ThemeContext';
 import * as postsUtils from '../../utils/posts';
 
 // Mock the posts utility
@@ -41,11 +40,9 @@ const mockGroupedPosts = {
 const renderWithProviders = () => {
   return render(
     <HelmetProvider>
-      <ThemeProvider>
-        <BrowserRouter>
-          <Home />
-        </BrowserRouter>
-      </ThemeProvider>
+      <BrowserRouter>
+        <Home />
+      </BrowserRouter>
     </HelmetProvider>
   );
 };

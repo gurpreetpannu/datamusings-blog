@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getPostBySlug } from '../utils/posts';
 import SEO from './SEO';
 import '../styles.css';
@@ -88,7 +88,9 @@ const PostDetail = () => {
   return (
     <div className="post-detail">
       <SEO post={post} />
-      
+
+      <Link to="/" className="back-link">← Back to Home</Link>
+
       <article className="full-post">
         <h1 className="post-title">{post.title}</h1>
         <div className="post-meta">
@@ -98,16 +100,16 @@ const PostDetail = () => {
           <span> </span>
           <span>{post.readTime} min read</span>
         </div>
-        
+
         {post.image && (
-          <img 
-            src={post.image} 
-            alt={post.title} 
+          <img
+            src={post.image}
+            alt={post.title}
             className="post-detail-image"
           />
         )}
-        
-        <div 
+
+        <div
           className="post-content"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
@@ -115,7 +117,7 @@ const PostDetail = () => {
 
       <section className="comments-section">
         <h2>Comments</h2>
-        
+
         <form onSubmit={handleCommentSubmit} className="comment-form">
           <div className="form-group">
             <input
@@ -143,8 +145,8 @@ const PostDetail = () => {
           {commentError && (
             <p className="comment-error">{commentError}</p>
           )}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="comment-button"
             disabled={isSubmitting}
           >

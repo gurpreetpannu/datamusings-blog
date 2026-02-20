@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
-import { useTheme } from '../context/ThemeContext';
 import '../styles.css';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
 
   const toggleMenu = () => {
@@ -24,17 +22,10 @@ const Navigation = () => {
 
         <div className="nav-actions">
           <button
-            className="theme-toggle"
-            onClick={toggleTheme}
-            aria-label="Toggle dark mode"
-          >
-            {isDarkMode ? '🌞' : '🌙'}
-          </button>
-
-          <button
             className="mobile-menu-button"
             onClick={toggleMenu}
             aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
           >
             <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
           </button>
@@ -77,4 +68,4 @@ const Navigation = () => {
   );
 };
 
-export default Navigation; 
+export default Navigation;

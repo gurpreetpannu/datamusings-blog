@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import PostDetail from '../PostDetail';
-import { ThemeProvider } from '../../context/ThemeContext';
 import * as postsUtils from '../../utils/posts';
 
 // Mock the posts utility
@@ -26,13 +25,11 @@ const mockPost = {
 const renderWithProviders = (slug = 'test-post') => {
   return render(
     <HelmetProvider>
-      <ThemeProvider>
-        <MemoryRouter initialEntries={[`/post/${slug}`]}>
-          <Routes>
-            <Route path="/post/:slug" element={<PostDetail />} />
-          </Routes>
-        </MemoryRouter>
-      </ThemeProvider>
+      <MemoryRouter initialEntries={[`/post/${slug}`]}>
+        <Routes>
+          <Route path="/post/:slug" element={<PostDetail />} />
+        </Routes>
+      </MemoryRouter>
     </HelmetProvider>
   );
 };
